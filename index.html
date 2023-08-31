@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GST Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url(https://media.istockphoto.com/id/1093110112/photo/picturesque-morning-in-plitvice-national-park-colorful-spring-scene-of-green-forest-with-pure.jpg?s=2048x2048&w=is&k=20&c=tham9mrEi9jesIOVGKIfeph_wTUIn-CcWi93LhchAbw=); /* Replace 'background-image.jpg' with your image file path */
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .calculator {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            margin: 0 0 20px;
+            color: #333;
+        }
+
+        label, input[type="number"], select, button {
+            display: block;
+            margin-bottom: 15px;
+        }
+
+        input[type="number"], select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        p {
+            font-weight: bold;
+            font-size: 20px;
+            margin-top: 20px;
+        }
+
+        .result {
+            color: #4CAF50;
+        }
+
+        .error {
+            color: #F44336;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <h1>GST Calculator</h1>
+        <label for="amountType">Select Amount Type:</label>
+        <input type="radio" name="amountType" id="exclGST" value="exclGST" checked>
+        <label for="exclGST">Amount excluding GST</label>
+        <input type="radio" name="amountType" id="inclGST" value="inclGST">
+        <label for="inclGST">Amount including GST</label>
+        <label for="amount">Enter Amount (in INR):</label>
+        <input type="number" id="amount" placeholder="Amount">
+        <label for="gstRate">Select GST Rate:</label>
+        <select id="gstRate">
+            <option value="5">5%</option>
+            <option value="12">12%</option>
+            <option value="18">18%</option>
+            <option value="28">28%</option>
+        </select>
+        <label for="customGSTRate">Custom GST Rate (if selected above):</label>
+        <input type="number" id="customGSTRate" placeholder="Custom GST Rate">
+        <button onclick="calculateGST()">Calculate GST</button>
+        <p id="stateGSTResult" class="result"></p>
+        <p id="centralGSTResult" class="result"></p>
+        <p id="totalGSTResult" class="result"></p>
+        <p id="totalAmountResult" class="result"></p>
+        <p id="errorResult" class="error"></p>
+    </div>
+    <script>
+        function calculateGST() {
+            const amountType = document.querySelector('input[name="amountType"]:checked').value;
+            const amount = parseFloat(document.getElementById("amount").value);
+            const gstRate = parseFloat(document.getElementById("gstRate").value);
+            const customGSTRate = parseFloat(document.getElementById("customGSTRate").value);
+
+            const selectedGSTRate = isNaN(customGSTRate) ? gstRate : customGSTRate;
+
+            if (!isNaN(amount) && !isNaN(selectedGSTRate)) {
+                let gstAmount, stateGSTAmount, centralGSTAmount, totalAmount;
+
+                if (amountType === "exclGST") {
+                    gstAmount = (amount * selectedGSTRate) / 100;
+                    totalAmount = amount + gstAmount;
+                } else {
+                    totalAmount = amount;
+                    gstAmount = (totalAmount * selectedGSTRate) / (100 + selectedGSTRate);
+                }
+
+                stateGSTAmount = (gstAmount / 2);
+                centralGSTAmount = (gstAmount / 2);
+
+                document.getElementById("stateGSTResult").innerHTML = `State GST Amount: INR ${stateGSTAmount.toFixed(2)}`;
+                document.getElementById("centralGSTResult").innerHTML = `Central GST Amount: INR ${centralGSTAmount.toFixed(2)}`;
+                document.getElementById("totalGSTResult").innerHTML = `Total GST Amount: INR ${gstAmount.toFixed(2)}`;
+                document.getElementById("totalAmountResult").innerHTML = `Total Amount: INR ${totalAmount.toFixed(2)}`;
+                document.getElementById("errorResult").innerHTML = '';
+            } else {
+                document.getElementById("stateGSTResult").innerHTML = "";
+                document.getElementById("centralGSTResult").innerHTML = "";
+                document.getElementById("totalGSTResult").innerHTML = "";
+                document.getElementById("totalAmountResult").innerHTML = "";
+                document.getElementById("errorResult").innerHTML = "Please enter valid values.";
+            }
+        }
+    </script>
+</body>
+</html>
